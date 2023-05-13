@@ -16,7 +16,7 @@ class User(db.Model, UserMixin):
     items = db.relationship('Item', backref='owned_user', lazy=True)
 
     def can_purchase(self, item_obj):
-        return self.budget >= item_obj
+        return self.budget >= item_obj.price
 
 
 
@@ -48,3 +48,8 @@ class Item(db.Model):
     owner = db.Column(db.Integer(), db.ForeignKey('user.id'))
     def __repr__(self):
         return f'Item {self.name}'
+    
+    def buy(self, user):
+           self.owner = user.id
+           user.budget -= self.price
+           db.session.commit()
